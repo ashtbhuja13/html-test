@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake Game</title>
+    <Style>
+        h1{
+            color: red;
+        }
+        #canvas{
+            border: 2px solid black;
+            background-color: black;
+        }
+        body{
+            background-color: goldenrod;
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+        }
+    </Style>
+</head>
+<body>
+    <h1>Snake Game</h1> 
+    <span>score:</span><span id="s1">0</span>
+    <canvas height="400px" width="400px" id="canvas"></canvas>
+
+    <audio id="v1" src="freesound_community-snake-hiss-95241.mp3"></audio>
+
+    <script>
+        let direction = null;
+        let c1 = document.getElementById('canvas');
+        let s1 = document.getElementById('s1');
+         
+        let ctx= c1.getContext("2d");
+        let unitSize=25;
+      let voice = document.getElementById('v1');
+
+        let snakeX = Math.floor(Math.random()*400/unitSize)*unitSize;
+        let snakeY = Math.floor(Math.random()*400/unitSize)*unitSize;
+
+        let snake = [{X:Math.floor(Math.random()*400/unitSize)*unitSize, Y:Math.floor(Math.random()*400/unitSize)*unitSize}];
+        
+        let foodX = Math.floor(Math.random()*400/unitSize)*unitSize;
+        let foodY = Math.floor(Math.random()*400/unitSize)*unitSize;
+       
+       
+
+        
+        function draw(){
+            ctx.clearRect(0,0,400,400);
+       
+
+        ctx.fillStyle = "red";
+        ctx.fillRect(foodX,foodY,unitSize,unitSize);
+
+         ctx.fillStyle = "yellow";
+         snake.forEach((s)=>{
+            ctx.fillRect(s.X,s.Y,unitSize,unitSize);
+         }
+            );
+        } 
+
+
+         
+        document.addEventListener('keyup',
+            function(event){
+                if (event.key=== "ArrowUp" && direction !== "Down") direction = "Up";
+                if(event.key=== "ArrowDown" && direction !== "Up") direction = "Down";
+                if (event.key=== "ArrowLeft" && direction !== "Right") direction = "Left";
+                if (event.key=== "ArrowRight" && direction !== "Left") direction = "Right";
+
+              
+draw();
+
+            }
+        );
+       
+
+    draw();
+    
+   setInterval(() => {
+
+    let head = {X: snake[0].X, Y: snake[0].Y};
+    if(direction === "Up") head.Y-=unitSize;
+    if(direction === "Down") head.Y+=unitSize;
+    if(direction === "Left") head.X-=unitSize;
+    if(direction === "Right") head.X+=unitSize;
+  
+    snake.unshift(head);
+   
+
+     // boundary conditions
+               if(head.X>400 || head.X<0 || head.Y>400 || head.Y<0)
+                {
+                alert("Game Over!");
+                snake = [{X:Math.floor(Math.random()*400/unitSize)*unitSize, Y:Math.floor(Math.random()*400/unitSize)*unitSize}];
+                s1.textContent = 0;
+                 
+                let foodX = Math.floor(Math.random()*400/unitSize)*unitSize;
+                let foodY = Math.floor(Math.random()*400/unitSize)*unitSize;
+       
+               }
+               //food eaten
+               if(head.X==foodX && head.Y==foodY)
+               {
+                voice.play();
+                s1.textContent = parseInt(s1.textContent)+1;
+                foodX = Math.floor(Math.random()*400/unitSize)*unitSize;
+                foodY = Math.floor(Math.random()*400/unitSize)*unitSize;
+               }
+               else{
+                snake.pop();
+               }
+                draw();
+    }, 700);
+
+         
+    </script>
+</body>
+</html>
